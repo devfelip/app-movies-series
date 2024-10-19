@@ -1,0 +1,57 @@
+# Deployment do Postgre
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgre-app-movies-series
+spec:
+  selector:
+    matchLabels:
+      app: postgre-app-movies-series
+  template:
+    metadata:
+      labels:
+        app: postgre-app-movies-series
+    spec:
+      containers:
+        - name: postgre-app-movies-series
+          image: postgres:14.3
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: movies-series-db-config  # Configurações do ConfigMap
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials-secret  # Referência ao Secret
+                  key: DB_PASSWORD
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-movies-series
+spec:
+  selector:
+    matchLabels:
+      app: app-movies-series
+  template:
+    metadata:
+      labels:
+        app: app-movies-series
+    spec:
+      containers:
+      - name: app-movies-series
+        image: felipecs8/app-movies-series
+        ports:
+          - containerPort: 3000
+        envFrom:
+          - configMapRef:
+              name: movies-series-config  # Configurações do ConfigMap
+        env:
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-credentials-secret  # Referência ao Secret
+                key: DB_PASSWORD

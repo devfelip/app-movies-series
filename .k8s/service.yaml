@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-movies-series-service
+spec:
+  selector:
+    app: app-movies-series  # Conecta o Service ao Deployment baseado no label "app".
+  ports:
+    - protocol: TCP
+      port: 80       # Porta que o Service irá expor.
+      targetPort: 3000 # Porta do container dentro do Pod.
+  type: ClusterIP  # Escolha o tipo apropriado (ClusterIP, NodePort, LoadBalancer).
+  
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgre-app-movies-series-service
+spec:
+  selector:
+    app: postgre-app-movies-series
+  type: NodePort  # Para expor o banco de dados externamente. Para nuvem, use 'LoadBalancer'.
+  ports:
+    - port: 5432
+      targetPort: 5432

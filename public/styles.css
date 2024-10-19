@@ -1,0 +1,90 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #000;
+    color: #fff;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.carousel {
+    width: 90%; /* Ajuste a largura do carrossel conforme necessário */
+}
+
+.carousel div {
+    margin: 0 20px; /* Espaço horizontal entre os itens do carrossel */
+    overflow: hidden;
+}
+
+.carousel img {
+    width: 400px;
+    height: 600px; /* Altura fixa para as imagens */
+    border-radius: 10px; /* Bordas arredondadas */
+    display: block; /* Faz com que as imagens sejam tratadas como blocos */
+}
+
+
+.carousel-item {
+    position: relative;
+    overflow: hidden; /* Esconde a parte que ultrapassa o limite */
+}
+
+.item-content {
+    width: 100%;
+    position: relative;
+}
+
+.item-content img {
+    width: 100%;
+    height: 600px;
+    transition: transform 0.3s ease;
+}
+
+.item-content:hover img {
+    transform: scale(1.08); /* Aumenta a imagem ao passar o mouse */
+}
+
+.info-overlay {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0; /* Garante que a sobreposição cubra toda a área */
+    background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro com transparência */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Inicia invisível */
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(5px); /* Efeito de blur no fundo */
+}
+
+.item-content:hover .info-overlay {
+    opacity: 1; /* Torna a sobreposição visível ao passar o mouse */
+}
+
+.delete-button {
+    position: absolute;
+    bottom: 10px; /* Ajuste conforme necessário */
+    right: 10px;  /* Ajuste conforme necessário */
+    background-color: transparent; /* Fundo transparente */
+    color: red; /* Cor do ícone */
+    border: none; /* Sem borda */
+    cursor: pointer; /* Cursor de mão ao passar o mouse */
+    z-index: 10; /* Garante que o botão fique acima do conteúdo */
+    font-size: 20px; /* Tamanho do ícone */
+}
+
+.delete-button:hover {
+    color: darkred; /* Cor do ícone ao passar o mouse */
+}

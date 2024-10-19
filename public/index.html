@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmes e Séries</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <h1>Filmes e Séries</h1>
+    <div class="carousel" id="carousel"></div>
+    <button onclick="location.href='/cadastro'">Cadastrar Filme/Série</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+    <script>
+        function loadMovies() {
+            fetch('/api/movies-series')
+                .then(response => response.json())
+                .then(data => {
+                    const carousel = document.getElementById('carousel');
+                    carousel.innerHTML = ''; // Limpa o carrossel antes de adicionar novos itens
+
+                    data.forEach(item => {
+                        const img = document.createElement('div');
+                        img.className = 'carousel-item'; // Classe para estilização
+                        img.innerHTML = `
+                            <div class="item-content">
+                                <img src="${item.image}" alt="${item.title}" />
+                                <div class="info-overlay">
+                                    <h2>${item.title}</h2>
+                                    <p>${item.description}</p>
+                                    <button class="delete-button" onclick="deleteMovie('${item.id}')">
+                                        <i class="fas fa-trash-alt"></i> <!-- Ícone de lixeira -->
+                                    </button>
+                                </div>
+                            </div>`;
+                        carousel.appendChild(img);
+                    });
+
+                    // Inicializa o Slick Carousel
+                    $('#carousel').slick({
+                        dots: true,          // Mostra os pontos de navegação
+                        infinite: true,      // Carrossel infinito
+                        speed: 500,          // Velocidade de transição
+                        slidesToShow: 3,     // Número de slides a mostrar
+                        slidesToScroll: 1,   // Número de slides a rolar
+                        draggable: true,      // Permite arrastar
+                        swipe: true,          // Permite arrastar com o toque em dispositivos móveis
+                        responsive: [
+                            {
+                                breakpoint: 768,
+                                settings: {
+                                    slidesToShow: 2,
+                                    slidesToScroll: 1
+                                }
+                            },
+                            {
+                                breakpoint: 480,
+                                settings: {
+                                    slidesToShow: 1,
+                                    slidesToScroll: 1
+                                }
+                            }
+                        ]
+                    });
+                })
+                .catch(error => console.error('Erro ao carregar filmes e séries:', error));
+        }
+
+        // Função para excluir filme
+        function deleteMovie(id) {
+            // Pergunta ao usuário se deseja realmente excluir
+            const confirmDelete = confirm("Tem certeza que deseja excluir este filme/série?");
+            
+            if (confirmDelete) {
+                fetch(`/api/movies-series/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload(); // Recarrega a página após a exclusão
+                        //loadMovies(); // Recarrega os filmes após a exclusão
+                    } else {
+                        console.error('Erro ao excluir o filme/série.');
+                    }
+                })
+                .catch(error => console.error('Erro ao excluir filme/série:', error));
+            }
+        }
+
+        // Carrega os filmes ao iniciar
+        loadMovies();
+    </script>
+</body>
+
+</html>

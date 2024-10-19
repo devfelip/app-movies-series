@@ -1,0 +1,15 @@
+{
+  "name": "movies-series-app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "pg": "^8.7.1",
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

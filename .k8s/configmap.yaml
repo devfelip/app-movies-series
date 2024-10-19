@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: movies-series-config
+data:
+  DB_USER: "app-movies-series"
+  DB_HOST: "postgre-app-movies-series-service.apps.svc.cluster.local"
+  DB_DATABASE: "app-movies-series"
+  DB_PORT: "5432"
+  PORT: "3000"
