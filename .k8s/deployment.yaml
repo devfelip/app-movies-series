@@ -1,4 +1,45 @@
-# Deployment do Postgre
+# ConfigMap para a aplicação
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: movies-series-config
+data:
+  DB_USER: "postgres"
+  DB_NAME: "app-node-docker"
+  DB_HOST: "postgre-app-movies-series"
+  DB_PORT: "5432"
+
+# ConfigMap para o PostgreSQL
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: movies-series-db-config
+data:
+  POSTGRES_USER: "postgres"
+  POSTGRES_DB: "app-node-docker"
+
+# Secret para a senha do banco de dados
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials-secret
+type: Opaque
+data:
+  DB_PASSWORD: {{ sua_senha_codificada_em_base64 }}
+
+# PersistentVolumeClaim para PostgreSQL
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi  # Defina o tamanho desejado para o volume
+
+# Deployment do PostgreSQL
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,15 +60,22 @@ spec:
             - containerPort: 5432
           envFrom:
             - configMapRef:
-                name: movies-series-db-config  # Configurações do ConfigMap
+                name: movies-series-db-config
           env:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-credentials-secret  # Referência ao Secret
+                  name: db-credentials-secret
                   key: DB_PASSWORD
----
+          volumeMounts:
+            - mountPath: "/var/lib/postgresql/data"
+              name: postgres-storage
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
 
+# Deployment da aplicação
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -48,10 +96,10 @@ spec:
           - containerPort: 3000
         envFrom:
           - configMapRef:
-              name: movies-series-config  # Configurações do ConfigMap
+              name: movies-series-config
         env:
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: db-credentials-secret  # Referência ao Secret
+                name: db-credentials-secret
                 key: DB_PASSWORD
