@@ -33,7 +33,9 @@ spec:
         - name: postgres-storage
           persistentVolumeClaim:
             claimName: postgres-pvc
+
 ---
+
 # Deployment da aplicação
 apiVersion: apps/v1
 kind: Deployment

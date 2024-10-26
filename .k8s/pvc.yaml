@@ -8,4 +8,4 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi  # Defina o tamanho desejado para o volume
+      storage: 2Gi  # Defina o tamanho desejado para o volume

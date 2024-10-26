@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-movies-series
+spec:
+  rules:
+    - host: movies.192.168.2.203.nip.io    # Você pode configurar o nome de domínio desejado
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: app-movies-series-service  # Nome do seu serviço Kubernetes
+                port:
+                  number: 80  # Porta exposta pelo serviço
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-movies-series-db
+spec:
+  rules:
+    - host: movies-db.192.168.2.203.nip.io    # Você pode configurar o nome de domínio desejado
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: postgre-app-movies-series-service # Nome do seu serviço Kubernetes
+                port:
+                  number: 5432  # Porta exposta pelo serviço

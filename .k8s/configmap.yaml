@@ -8,3 +8,13 @@ data:
   DB_DATABASE: "app-movies-series"
   DB_PORT: "5432"
   PORT: "3000"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: movies-series-db-config
+data:
+  POSTGRES_USER: "app-movies-series"
+  POSTGRES_DB: "app-movies-series"
