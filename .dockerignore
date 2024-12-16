@@ -1,8 +1,8 @@
 # add git-ignore syntax here of things you don't want copied into docker image
 
 .git
+.k8s
 *Dockerfile*
 *docker-compose*
-*.log
-node_modules
-.k8s
+./src/*.log
+./src/node_modules
