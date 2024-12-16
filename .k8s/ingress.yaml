@@ -4,16 +4,16 @@ metadata:
   name: ingress-movies-series
 spec:
   rules:
-    - host: movies.192.168.2.203.nip.io    # Você pode configurar o nome de domínio desejado
+    - host: movies.127.0.0.1.nip.io
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: app-movies-series-service  # Nome do seu serviço Kubernetes
+                name: app-movies-series-service
                 port:
-                  number: 80  # Porta exposta pelo serviço
+                  number: 80
 
 ---
 
@@ -23,13 +23,13 @@ metadata:
   name: ingress-movies-series-db
 spec:
   rules:
-    - host: movies-db.192.168.2.203.nip.io    # Você pode configurar o nome de domínio desejado
+    - host: movies-db.127.0.0.1.nip.io
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: postgre-app-movies-series-service # Nome do seu serviço Kubernetes
+                name: postgre-app-movies-series-service
                 port:
-                  number: 5432  # Porta exposta pelo serviço
+                  number: 5432
