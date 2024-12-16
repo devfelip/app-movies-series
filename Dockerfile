@@ -5,13 +5,13 @@ FROM node:14-alpine
 WORKDIR /usr/src/app
 
 # Copia o package.json e o package-lock.json
-COPY package*.json ./
+COPY ./src/package*.json ./
 
 # Instala as dependências
 RUN npm install
 
 # Copia o restante do código
-COPY . .
+COPY ./src .
 
 # Expõe a porta em que o aplicativo irá rodar
 EXPOSE 3000
