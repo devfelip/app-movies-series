@@ -5,7 +5,7 @@ const { Pool } = require('pg');
 const app = express();
 const port = 3000;
 
-// Configuração do banco de dados (substitua com as variáveis de ambiente se preferir)
+// Configuração do banco de dados
 const pool = new Pool({
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
@@ -25,20 +25,16 @@ async function createTableIfNotExists() {
             image TEXT
         );
     `;
-    try {
-        await pool.query(createTableQuery);
-        console.log("Tabela 'movies_series' verificada/criada com sucesso.");
-    } catch (err) {
-        console.error('Erro ao verificar/criar a tabela:', err);
-    }
+    await pool.query(createTableQuery);
+    console.log("Tabela 'movies_series' verificada/criada com sucesso.");
 }
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static('public')); // Serve arquivos estáticos da pasta public
+app.use(express.static('public'));
 
-// Rota para obter filmes e séries
+// Rotas
 app.get('/api/movies-series', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM movies_series');
@@ -49,7 +45,6 @@ app.get('/api/movies-series', async (req, res) => {
     }
 });
 
-// Rota para o cadastro
 app.post('/cadastro', async (req, res) => {
     const { title, type, description, image } = req.body;
     try {
@@ -64,21 +59,39 @@ app.post('/cadastro', async (req, res) => {
     }
 });
 
-// Rota para a página de cadastro
 app.get('/cadastro', (req, res) => {
     res.sendFile(__dirname + '/public/cadastro.html');
 });
 
-// Rota para excluir filmes e séries
-app.delete('/api/movies-series/:id', (req, res) => {
+app.delete('/api/movies-series/:id', async (req, res) => {
     const id = req.params.id;
-    pool.query('DELETE FROM movies_series WHERE id = $1', [id])
-        .then(() => res.sendStatus(204)) // No Content
-        .catch(err => res.status(500).send('Erro ao excluir o filme/série.'));
+    try {
+        await pool.query('DELETE FROM movies_series WHERE id = $1', [id]);
+        res.sendStatus(204);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao excluir o filme/série.');
+    }
 });
 
-// Inicializar servidor e criar tabela
-app.listen(port, async () => {
-    console.log(`Servidor rodando na porta ${port}`);
-    await createTableIfNotExists(); // Verifica ou cria a tabela ao iniciar
-});
+// Função para tentar conectar até conseguir
+async function connectAndStart() {
+    while (true) {
+        try {
+            console.log('Tentando conectar ao banco...');
+            await pool.query('SELECT 1'); // teste de conexão simples
+            console.log('Conexão com o banco estabelecida!');
+            await createTableIfNotExists();
+            app.listen(port, () => {
+                console.log(`Servidor rodando na porta ${port}`);
+            });
+            break; // sai do loop após sucesso
+        } catch (err) {
+            console.error('Falha ao conectar ao banco, tentando novamente em 5 segundos...', err.message);
+            await new Promise(res => setTimeout(res, 5000)); // espera 5 segundos
+        }
+    }
+}
+
+// Inicia tudo
+connectAndStart();
